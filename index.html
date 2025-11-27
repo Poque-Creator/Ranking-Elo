@@ -30,6 +30,21 @@
       font-weight:600;
       transition:0.2s;
     }
+    .play-button {
+  text-decoration: none;
+  background: #0066ff;       /* mismo color que los botones de navegación */
+  color: white;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: 0.2s;
+  display: inline-block;
+}
+
+.play-button:hover {
+  background: #004acc;
+}
     .nav-buttons a:hover{background:#004acc}
 
     .card{background:var(--card);padding:18px;border-radius:16px;box-shadow:0 6px 18px rgba(12,15,20,0.08);margin-top:16px;border:2px solid #e0e7ff;overflow-x:auto;scroll-snap-type:none}
@@ -65,6 +80,7 @@
       <div class="nav-buttons">
         <a href="#ranking">Ir al Ranking</a>
         <a href="#matches">Ir a Partidos</a>
+        <a class="play button" href="https://poque-creator.github.io/Ranking-Elo/" target="_blank">Jugar Super-Tres-En-Raya</a>
       </div>
     </header>
 
@@ -224,3 +240,4 @@ document.addEventListener("DOMContentLoaded", () => {
   </div>
 </body>
 </html>
+
