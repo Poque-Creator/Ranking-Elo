@@ -105,74 +105,74 @@
           <tr>
             <td data-name>Jose</td>
             <td data-elo>12</td>
-            <td>2</td>
-            <td>2</td>
-            <td>0</td>
-            <td>0</td>
+            <td data-j></td>
+            <td data-v></td>
+            <td data-e>0</td>
+            <td data-d>0</td>
           </tr>
           <tr>
             <td data-name>Jhonatan</td>
             <td data-elo>6</td>
-            <td>3</td>
-            <td>1</td>
-            <td>0</td>
-            <td>2</td>
+            <td data-j></td>
+            <td data-v>1</td>
+            <td data-e>0</td>
+            <td data-d>2</td>
           </tr>
           <tr>
             <td data-name>Samuel</td>
             <td data-elo>0</td>
-            <td>1</td>
-            <td>0</td>
-            <td>0</td>
-            <td>1</td>
+            <td data-j></td>
+            <td data-v>0</td>
+            <td data-e>0</td>
+            <td data-d>1</td>
           </tr>
           <tr>
             <td data-name>Hugo</td>
             <td data-elo>11</td>
-            <td>3</td>
-            <td>2</td>
-            <td>0</td>
-            <td>1</td>
+            <td data-j></td>
+            <td data-v>2</td>
+            <td data-e>0</td>
+            <td data-d>1</td>
           </tr>
           <tr>
             <td data-name>Victor</td>
             <td data-elo>13</td>
-            <td>3</td>
-            <td>2</td>
-            <td>0</td>
-            <td>1</td>
+            <td data-j></td>
+            <td data-v>2</td>
+            <td data-e>0</td>
+            <td data-d>1</td>
           </tr>
           <tr>
             <td data-name>Ouxiang</td>
             <td data-elo>0</td>
-            <td>2</td>
-            <td>0</td>
-            <td>0</td>
-            <td>2</td>
+            <td data-j></td>
+            <td data-v>0</td>
+            <td data-e>0</td>
+            <td data-d>2</td>
           </tr>
            <tr>
             <td data-name>Andrei</td>
             <td data-elo>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td data-j></td>
+            <td data-v>0</td>
+            <td data-e>0</td>
+            <td data-d>0</td>
           </tr>
            <tr>
             <td data-name>Josias</td>
             <td data-elo>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td data-j></td>
+            <td data-v>3</td>
+            <td data-e>500</td>
+            <td data-d>0</td>
           </tr>
            <tr>
             <td data-name>Jose Ignacio de Economía</td>
             <td data-elo>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td data-j></td>
+            <td data-v>0</td>
+            <td data-e>0</td>
+            <td data-d>0</td>
           </tr>
           <!-- ================================================ -->
         </tbody>
@@ -216,6 +216,14 @@ document.addEventListener("DOMContentLoaded", () => {
     tbody.appendChild(row);
   });
 });
+        rows.forEach(row => {
+  const v = Number(row.querySelector('[data-v]')?.textContent.trim() || 0);
+  const e = Number(row.querySelector('[data-e]')?.textContent.trim() || 0);
+  const d = Number(row.querySelector('[data-d]')?.textContent.trim() || 0);
+
+  const playedCell = row.querySelector('[data-j]');
+  if (playedCell) playedCell.textContent = v + e + d;
+});
 </script>
     </section>
 
@@ -240,6 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
   </div>
 </body>
 </html>
+
 
 
 
