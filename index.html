@@ -221,8 +221,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const e = Number(row.querySelector('[data-e]')?.textContent.trim() || 0);
   const d = Number(row.querySelector('[data-d]')?.textContent.trim() || 0);
 
-  const JugadosCell = row.querySelector('[data-j]');
-  if (JugadosCell) JugadosCell.textContent = v + e + d;
+  const j = row.querySelector('[data-j]');
+  if (jCell) jCell.textContent = v + e + d;
 });
 </script>
     </section>
@@ -248,6 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
   </div>
 </body>
 </html>
+
 
 
 
