@@ -106,7 +106,7 @@
             <td data-name>Jose</td>
             <td data-elo>12</td>
             <td data-j></td>
-            <td data-v></td>
+            <td data-v>2</td>
             <td data-e>0</td>
             <td data-d>0</td>
           </tr>
@@ -216,13 +216,13 @@ document.addEventListener("DOMContentLoaded", () => {
     tbody.appendChild(row);
   });
 });
-        rows.forEach(row => {
+  rows.forEach(row => {
   const v = Number(row.querySelector('[data-v]')?.textContent.trim() || 0);
   const e = Number(row.querySelector('[data-e]')?.textContent.trim() || 0);
   const d = Number(row.querySelector('[data-d]')?.textContent.trim() || 0);
 
-  const playedCell = row.querySelector('[data-j]');
-  if (playedCell) playedCell.textContent = v + e + d;
+  const JugadosCell = row.querySelector('[data-j]');
+  if (JugadosCell) JugadosCell.textContent = v + e + d;
 });
 </script>
     </section>
@@ -248,6 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
   </div>
 </body>
 </html>
+
 
 
 
