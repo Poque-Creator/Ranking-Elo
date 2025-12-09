@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Tres en Raya</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes neonPulse {
+      0%, 100% {
+        box-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88, 0 0 15px #00ff88;
+        text-shadow: 0 0 5px #00ff88;
+      }
+      50% {
+        box-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88;
+        text-shadow: 0 0 10px #00ff88;
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .play-button {
+      transition: all 0.3s ease;
+    }
+
+    .play-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+    }
+
+    .game-cell {
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .game-cell:hover:not(.taken) {
+      background: rgba(59, 130, 246, 0.2);
+      transform: scale(1.05);
+    }
+
+    .game-cell.taken {
+      cursor: not-allowed;
+    }
+
+    .modal-backdrop {
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-content {
+      animation: slideDown 0.3s ease-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+  
+  <!-- Botón para abrir el juego -->
+  <button onclick="openGame()" class="play-button fixed bottom-8 right-8 px-6 py-3 rounded-xl font-semibold text-sm bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg hover:from-blue-600 hover:to-purple-600 flex items-center gap-2">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    Jugar
+  </button>
+
+  <!-- Modal del Juego -->
+  <div id="game-modal" class="hidden fixed inset-0 z-50">
+    <!-- Backdrop -->
+    <div class="modal-backdrop absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onclick="closeGame()"></div>
+    
+    <!-- Contenido del Modal -->
+    <div class="modal-content relative z-10 max-w-md mx-auto mt-20">
+      <div class="bg-white rounded-2xl shadow-2xl p-8">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Tres en Raya
+          </h2>
+          <button onclick="closeGame()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">
+            ✕
+          </button>
+        </div>
+
+        <!-- Info del turno y selector de modo -->
+        <div class="mb-6">
+          <!-- Selector de modo -->
+          <div class="flex gap-2 mb-4 justify-center">
+            <button onclick="setMode('pvp')" id="mode-pvp" class="px-4 py-2 rounded-lg font-semibold transition-all bg-blue-600 text-white">
+              Jugador vs Jugador
+            </button>
+            <button onclick="setMode('cpu')" id="mode-cpu" class="px-4 py-2 rounded-lg font-semibold transition-all bg-white text-gray-700 hover:bg-gray-100">
+              Jugador vs CPU
+            </button>
+          </div>
+          
+          <p class="text-lg font-semibold text-gray-700 text-center">
+            Turno de: <span id="current-player" class="text-blue-600 font-bold">X</span>
+          </p>
+        </div>
+
+        <!-- Tablero -->
+        <div class="grid grid-cols-3 gap-3 mb-6">
+          <div onclick="makeMove(0)" class="game-cell bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl h-24 flex items-center justify-center text-4xl font-bold text-gray-800 border-2 border-blue-300"></div>
+          <div onclick="makeMove(1)" class="game-cell bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl h-24 flex items-center justify-center text-4xl font-bold text-gray-800 border-2 border-blue-300"></div>
+          <div onclick="makeMove(2)" class="game-cell bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl h-24 flex items-center justify-center text-4xl font-bold text-gray-800 border-2 border-blue-300"></div>
+          <div onclick="makeMove(3)" class="game-cell bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl h-24 flex items-center justify-center text-4xl font-bold text-gray-800 border-2 border-blue-300"></div>
+          <div onclick="makeMove(4)" class="game-cell bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl h-24 flex items-center justify-center text-4xl font-bold text-gray-800 border-2 border-blue-300"></div>
+          <div onclick="makeMove(5)" class="game-cell bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl h-24 flex items-center justify-center text-4xl font-bold text-gray-800 border-2 border-blue-300"></div>
+          <div onclick="makeMove(6)" class="game-cell bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl h-24 flex items-center justify-center text-4xl font-bold text-gray-800 border-2 border-blue-300"></div>
+          <div onclick="makeMove(7)" class="game-cell bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl h-24 flex items-center justify-center text-4xl font-bold text-gray-800 border-2 border-blue-300"></div>
+          <div onclick="makeMove(8)" class="game-cell bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl h-24 flex items-center justify-center text-4xl font-bold text-gray-800 border-2 border-blue-300"></div>
+        </div>
+
+        <!-- Mensaje de resultado -->
+        <div id="result-message" class="hidden mb-4 p-4 rounded-xl text-center font-bold text-lg"></div>
+
+        <!-- Botones -->
+        <div class="flex gap-3">
+          <button onclick="resetGame()" class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:from-blue-600 hover:to-blue-700 transition-all shadow-lg">
+            Reiniciar
+          </button>
+          <button onclick="closeGame()" class="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-bold hover:bg-gray-300 transition-all">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let board = ['', '', '', '', '', '', '', '', ''];
+    let currentPlayer = 'X';
+    let gameActive = true;
+    let gameMode = 'pvp'; // 'pvp' o 'cpu'
+
+    const winningConditions = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Filas
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columnas
+      [0, 4, 8], [2, 4, 6]             // Diagonales
+    ];
+
+    function openGame() {
+      document.getElementById('game-modal').classList.remove('hidden');
+      resetGame();
+    }
+
+    function closeGame() {
+      document.getElementById('game-modal').classList.add('hidden');
+    }
+
+    function setMode(mode) {
+      gameMode = mode;
+      
+      const pvpBtn = document.getElementById('mode-pvp');
+      const cpuBtn = document.getElementById('mode-cpu');
+      
+      if (mode === 'pvp') {
+        pvpBtn.className = 'px-4 py-2 rounded-lg font-semibold transition-all bg-blue-600 text-white shadow-lg';
+        cpuBtn.className = 'px-4 py-2 rounded-lg font-semibold transition-all bg-white text-gray-700 hover:bg-gray-100';
+      } else {
+        cpuBtn.className = 'px-4 py-2 rounded-lg font-semibold transition-all bg-purple-600 text-white shadow-lg';
+        pvpBtn.className = 'px-4 py-2 rounded-lg font-semibold transition-all bg-white text-gray-700 hover:bg-gray-100';
+      }
+      
+      resetGame();
+    }
+
+    function makeMove(index) {
+      if (!gameActive || board[index] !== '') return;
+
+      board[index] = currentPlayer;
+      updateCell(index, currentPlayer);
+
+      if (checkWin()) {
+        const winner = currentPlayer === 'X' ? 'Jugador X' : (gameMode === 'cpu' && currentPlayer === 'O' ? 'CPU' : 'Jugador O');
+        showResult(`¡${winner} gana! 🎉`);
+        gameActive = false;
+        return;
+      }
+
+      if (checkDraw()) {
+        showResult('¡Empate! 🤝');
+        gameActive = false;
+        return;
+      }
+
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      updatePlayerDisplay();
+
+      // Si es modo CPU y es turno de O, la CPU juega
+      if (gameMode === 'cpu' && currentPlayer === 'O' && gameActive) {
+        setTimeout(cpuMove, 500);
+      }
+    }
+
+    function updateCell(index, player) {
+      const cells = document.querySelectorAll('.game-cell');
+      cells[index].textContent = player;
+      cells[index].classList.add('taken');
+      
+      if (player === 'X') {
+        cells[index].classList.add('text-blue-600');
+      } else {
+        cells[index].classList.add('text-purple-600');
+      }
+    }
+
+    function updatePlayerDisplay() {
+      const playerDisplay = document.getElementById('current-player');
+      if (gameMode === 'cpu' && currentPlayer === 'O') {
+        playerDisplay.textContent = 'CPU';
+        playerDisplay.className = 'text-purple-600 font-bold';
+      } else {
+        playerDisplay.textContent = currentPlayer;
+        playerDisplay.className = currentPlayer === 'X' ? 'text-blue-600 font-bold' : 'text-purple-600 font-bold';
+      }
+    }
+
+    function cpuMove() {
+      if (!gameActive) return;
+
+      // Estrategia de CPU: primero intenta ganar, luego bloquear, luego random
+      let move = findWinningMove('O') ?? findWinningMove('X') ?? findRandomMove();
+      
+      if (move !== null) {
+        makeMove(move);
+      }
+    }
+
+    function findWinningMove(player) {
+      for (let condition of winningConditions) {
+        const [a, b, c] = condition;
+        const values = [board[a], board[b], board[c]];
+        
+        if (values.filter(v => v === player).length === 2 && values.includes('')) {
+          return condition.find(i => board[i] === '');
+        }
+      }
+      return null;
+    }
+
+    function findRandomMove() {
+      const emptyIndices = board.map((val, idx) => val === '' ? idx : null).filter(val => val !== null);
+      
+      // Prioridad: centro, esquinas, luego bordes
+      const center = 4;
+      const corners = [0, 2, 6, 8];
+      
+      if (emptyIndices.includes(center)) return center;
+      
+      const availableCorners = corners.filter(c => emptyIndices.includes(c));
+      if (availableCorners.length > 0) {
+        return availableCorners[Math.floor(Math.random() * availableCorners.length)];
+      }
+      
+      return emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+    }
+
+    function checkWin() {
+      return winningConditions.some(condition => {
+        return condition.every(index => board[index] === currentPlayer);
+      });
+    }
+
+    function checkDraw() {
+      return board.every(cell => cell !== '');
+    }
+
+    function showResult(message) {
+      const resultDiv = document.getElementById('result-message');
+      resultDiv.textContent = message;
+      resultDiv.className = 'mb-4 p-4 rounded-xl text-center font-bold text-lg bg-gradient-to-r from-green-100 to-green-200 text-green-800';
+      resultDiv.classList.remove('hidden');
+    }
+
+    function resetGame() {
+      board = ['', '', '', '', '', '', '', '', ''];
+      currentPlayer = 'X';
+      gameActive = true;
+      
+      const cells = document.querySelectorAll('.game-cell');
+      cells.forEach(cell => {
+        cell.textContent = '';
+        cell.classList.remove('taken', 'text-blue-600', 'text-purple-600');
+      });
+
+      updatePlayerDisplay();
+      document.getElementById('result-message').classList.add('hidden');
+    }
+
+    // Cerrar con Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeGame();
+    });
+  </script>
+
+</body>
+  </html>
