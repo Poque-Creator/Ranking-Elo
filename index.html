@@ -425,25 +425,26 @@
   if (currentSort.key === 'name') {
     criteria = ['name', 'elo', 'winrate', 'w', 'd', 'l', 'played'];
   } else {
-    // Poner el criterio actual primero, luego los demás en orden
     criteria = [currentSort.key, 'elo', 'winrate', 'w', 'd', 'l', 'played', 'name'];
-    // Eliminar duplicados (por si el criterio actual ya está en la lista)
     criteria = [...new Set(criteria)];
   }
   
   // Aplicar criterios en cascada
-  for (let criterion of criteria) {
+  for (let i = 0; i < criteria.length; i++) {
+    let criterion = criteria[i];
     let aVal = a[criterion];
     let bVal = b[criterion];
     
     if (criterion === 'name') {
       const comparison = aVal.localeCompare(bVal);
       if (comparison !== 0) {
-        return currentSort.direction === 'asc' ? comparison : -comparison;
+        // Solo el primer criterio usa la dirección del usuario
+        return (i === 0 && currentSort.direction === 'asc') ? comparison : -comparison;
       }
     } else {
       if (aVal !== bVal) {
-        return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+        // Solo el primer criterio usa la dirección del usuario, el resto siempre descendente
+        return (i === 0 && currentSort.direction === 'asc') ? aVal - bVal : bVal - aVal;
       }
     }
   }
