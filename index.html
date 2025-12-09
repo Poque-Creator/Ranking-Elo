@@ -455,12 +455,12 @@
     function renderTable() { 
       const minGames = parseInt(document.getElementById('min-games-filter').value); 
       const activeOnly = document.getElementById('active-only-filter').checked; 
- 
-      let filtered = players.map(p => { 
+ let filtered = players.map(p => { 
         const played = p.w + p.d + p.l; 
-        const winrate = played > 0 ? ((p.w / played) * 100).toFixed(1) : 0; 
-        return {...p, played, winrate: parseFloat(winrate)}; 
-      }) 
+        const winrate = played > 0 ? ((p.w / played) * 100).toFixed(1) : 0;
+        const streak = calculateStreak(p.name);
+        return {...p, played, winrate: parseFloat(winrate), streak}; 
+      })
         .filter(p => p.played >= minGames && (!activeOnly || p.played > 0)); 
  
       filtered.sort((a, b) => { 
