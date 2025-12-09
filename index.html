@@ -417,39 +417,27 @@
         return {...p, played, winrate: parseFloat(winrate)}; 
       }) 
         .filter(p => p.played >= minGames && (!activeOnly || p.played > 0)); 
- 
-      filtered.sort((a, b) => { 
-  // Definir criterios de desempate según la columna ordenada
-  let criteria = [];
-  
-  if (currentSort.key === 'name') {
-    criteria = ['name', 'elo', 'winrate', 'w', 'd', 'l', 'played'];
+ filtered.sort((a, b) => { 
+  // Primer criterio: el seleccionado
+  let aVal = a[currentSort.key]; 
+  let bVal = b[currentSort.key]; 
+   
+  if (currentSort.key === 'name') { 
+    const nameComp = currentSort.direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+    if (nameComp !== 0) return nameComp;
   } else {
-    criteria = [currentSort.key, 'elo', 'winrate', 'w', 'd', 'l', 'played', 'name'];
-    criteria = [...new Set(criteria)];
+    const mainComp = currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+    if (mainComp !== 0) return mainComp;
   }
   
-  // Aplicar criterios en cascada
-  for (let i = 0; i < criteria.length; i++) {
-    let criterion = criteria[i];
-    let aVal = a[criterion];
-    let bVal = b[criterion];
-    
-    if (criterion === 'name') {
-      const comparison = aVal.localeCompare(bVal);
-      if (comparison !== 0) {
-        // Solo el primer criterio usa la dirección del usuario
-        return (i === 0 && currentSort.direction === 'asc') ? comparison : -comparison;
-      }
-    } else {
-      if (aVal !== bVal) {
-        // Solo el primer criterio usa la dirección del usuario, el resto siempre descendente
-        return (i === 0 && currentSort.direction === 'asc') ? aVal - bVal : bVal - aVal;
-      }
-    }
-  }
-  
-  return 0;
+  // Desempates en orden: elo, winrate, w, d, l, played, name
+  if (currentSort.key !== 'elo' && a.elo !== b.elo) return b.elo - a.elo;
+  if (currentSort.key !== 'winrate' && a.winrate !== b.winrate) return b.winrate - a.winrate;
+  if (currentSort.key !== 'w' && a.w !== b.w) return b.w - a.w;
+  if (currentSort.key !== 'd' && a.d !== b.d) return b.d - a.d;
+  if (currentSort.key !== 'l' && a.l !== b.l) return b.l - a.l;
+  if (currentSort.key !== 'played' && a.played !== b.played) return b.played - a.played;
+  return a.name.localeCompare(b.name);
 });
   
   // Aplicar criterios en cascada
