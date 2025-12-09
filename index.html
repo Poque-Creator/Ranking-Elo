@@ -304,8 +304,8 @@
   <script> 
     // Lista inicial de jugadores
     const initialPlayers = [
-      'Andrei', 'Hugo', 'Jhonatan', 'Jose', 'Jose Ignacio de Economía', 
-      'Josias', 'Ouxiang', 'Samuel', 'Victor'
+      'Victor', 'Hugo', 'Samuel', 'Jose', 'Jose Ignacio de Economía', 
+      'Josias', 'Ouxiang', 'Jhonatan', 'Andrei'
     ];
 
     // Partidos: cada partido modifica automáticamente las estadísticas
@@ -798,7 +798,27 @@
         return {...p, played, winrate: parseFloat(winrate)};
       }).filter(p => p.played > 0); // Solo mostrar jugadores que han jugado
       
-      playersWithStats.sort((a, b) => b.elo - a.elo);
+      playersWithStats.sort((a, b) => {
+        // Criterios de desempate en orden: elo, winrate, w, d, l, played, name
+        const tiebreakers = ['elo', 'winrate', 'w', 'd', 'l', 'played', 'name'];
+        
+        let comparison = 0;
+        
+        for (const criterion of tiebreakers) {
+          const aValue = a[criterion];
+          const bValue = b[criterion];
+          
+          if (criterion === 'name') {
+            comparison = aValue.localeCompare(bValue);
+          } else {
+            comparison = bValue - aValue;
+          }
+          
+          if (comparison !== 0) break;
+        }
+        
+        return comparison;
+      });
       
       const tbody = document.getElementById('history-table');
       tbody.innerHTML = playersWithStats.map((p, i) => `
