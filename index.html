@@ -358,6 +358,48 @@
     }
 
     const players = calculatePlayerStats();
+
+    // Función para calcular la racha actual de un jugador
+    function calculateStreak(playerName) {
+      // Filtrar partidos del jugador en orden cronológico
+      const playerMatches = matches.filter(m => 
+        m.player1 === playerName || m.player2 === playerName
+      );
+      
+      if (playerMatches.length === 0) return { type: 'none', count: 0 };
+      
+      // Empezar desde el último partido
+      let streak = 0;
+      let streakType = null;
+      
+      for (let i = playerMatches.length - 1; i >= 0; i--) {
+        const match = playerMatches[i];
+        const isPlayer1 = match.player1 === playerName;
+        
+        let result;
+        if (match.result === 'draw') {
+          result = 'draw';
+        } else if (
+          (match.result === 'win1' && isPlayer1) || 
+          (match.result === 'win2' && !isPlayer1)
+        ) {
+          result = 'win';
+        } else {
+          result = 'loss';
+        }
+        
+        if (streakType === null) {
+          streakType = result;
+          streak = 1;
+        } else if (streakType === result) {
+          streak++;
+        } else {
+          break;
+        }
+      }
+      
+      return { type: streakType, count: streak };
+    }
  
     let currentSort = { key: 'elo', direction: 'desc' }; 
  
