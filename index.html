@@ -450,6 +450,26 @@
   
   return 0;
 });
+  
+  // Aplicar criterios en cascada
+  for (let criterion of criteria) {
+    let aVal = a[criterion];
+    let bVal = b[criterion];
+    
+    if (criterion === 'name') {
+      const comparison = aVal.localeCompare(bVal);
+      if (comparison !== 0) {
+        return currentSort.direction === 'asc' ? comparison : -comparison;
+      }
+    } else {
+      if (aVal !== bVal) {
+        return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+      }
+    }
+  }
+  
+  return 0;
+});
          
         return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal; 
       }); 
