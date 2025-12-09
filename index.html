@@ -419,17 +419,46 @@
         .filter(p => p.played >= minGames && (!activeOnly || p.played > 0)); 
  
       filtered.sort((a, b) => { 
+        // Criterios de desempate en orden: elo, winrate, w, d, l, played, name
+        const tiebreakers = ['elo', 'winrate', 'w', 'd', 'l', 'played', 'name'];
+        
+        // Primero comparar por el criterio principal
         let aVal = a[currentSort.key]; 
         let bVal = b[currentSort.key]; 
-         
+        
+        let comparison = 0;
         if (currentSort.key === 'name') { 
-          return currentSort.direction === 'asc'  
+          comparison = currentSort.direction === 'asc'  
             ? aVal.localeCompare(bVal) 
             : bVal.localeCompare(aVal); 
-        } 
-         
-        return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal; 
-      }); 
+        } else {
+          comparison = currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+        }
+        
+        // Si hay empate, aplicar criterios de desempate
+        if (comparison === 0) {
+          for (const criterion of tiebreakers) {
+            // Saltar si es el mismo criterio que ya comparamos
+            if (criterion === currentSort.key) continue;
+            
+            const aValue = a[criterion];
+            const bValue = b[criterion];
+            
+            if (criterion === 'name') {
+              // Para nombres, siempre alfabético ascendente en desempate
+              comparison = aValue.localeCompare(bValue);
+            } else {
+              // Para valores numéricos, siempre descendente en desempate (mayor es mejor)
+              comparison = bValue - aValue;
+            }
+            
+            // Si encontramos una diferencia, salimos
+            if (comparison !== 0) break;
+          }
+        }
+        
+        return comparison;
+      });
  
       document.getElementById('filtered-count').textContent = filtered.length; 
       document.getElementById('total-count').textContent = players.length;
