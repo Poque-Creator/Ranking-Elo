@@ -874,6 +874,19 @@
             <span class="inline-block bg-indigo-600 text-white px-3 py-1 rounded-full font-bold">${p.elo}</span>
           </td>
           <td class="px-6 py-4 text-center text-gray-700">${p.played}</td>
+          <td class="px-6 py-4 text-center">
+            ${p.streak.count > 0 ? `
+              <span class="inline-block px-3 py-1 rounded-full font-bold text-sm
+                ${p.streak.type === 'win' && p.streak.count >= 3 ? 'bg-green-600 text-white' : ''}
+                ${p.streak.type === 'win' && p.streak.count < 3 ? 'bg-green-500 text-white' : ''}
+                ${p.streak.type === 'draw' ? 'bg-yellow-500 text-white' : ''}
+                ${p.streak.type === 'loss' && p.streak.count < 4 ? 'bg-red-500 text-white' : ''}
+                ${p.streak.type === 'loss' && p.streak.count >= 4 ? 'bg-red-700 text-white' : ''}
+              ">
+                ${p.streak.count}${p.streak.type === 'win' ? 'V' : p.streak.type === 'draw' ? 'E' : 'D'}
+              </span>
+            ` : '<span class="text-gray-400">-</span>'}
+          </td>
           <td class="px-6 py-4 text-center"><span class="text-green-600 font-bold">${p.w}</span></td>
           <td class="px-6 py-4 text-center"><span class="text-yellow-600 font-bold">${p.d}</span></td>
           <td class="px-6 py-4 text-center"><span class="text-red-600 font-bold">${p.l}</span></td>
